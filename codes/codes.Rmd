@@ -1,0 +1,66 @@
+---
+title: "775 final project"
+author: "Xinyan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+data = read.csv("cleaned_data_3.csv")
+```
+
+
+```{r}
+load("guns.RData")
+
+# Each column of X is an indicator of whether a state has a particular type of gun law
+# We will only use the number of gun laws as a predictor
+X_mat <- matrix(nrow = 50, ncol = 6, 
+                dimnames = list(rownames(X), c(colnames(Z), "num_laws")))
+
+# Standardize predictors to have mean 0 and sd 1/2
+x_mean <- rep(NA, times = 6)
+x_sd <- rep(NA, times = 6)
+for(j in 1:5){
+  x_mean[j] <- mean(Z[,j])
+  x_sd[j] <- sd(Z[,j])
+  X_mat[,j] <- (Z[,j] - x_mean[j])/(2 * x_sd[j])
+}
+num_laws <- rowSums(X) # total number of gun laws
+x_mean[6] <- mean(num_laws)
+x_sd[6] <- sd(num_laws)
+X_mat[,6] <- (num_laws - x_mean[6])/(2 * x_sd[6])
+
+n <- nrow(X_mat)
+p <- ncol(X_mat)
+
+
+########################################
+# Model 1: 
+#   Y_i ~ Poisson(N_i * lambda_i)
+#   log(lambda_i) = alpha + x_i'beta
+#   alpha ~ normal(mu_alpha, sigma)
+#   beta ~ normal(0, sigma * I)
+#   sigma2 ~ inv_gamma(3, 3)
+########################################
+
+# we will center alpha prior on mean( log(Y/N) ) # the average raw rate
+
+
+pois_model <-
+  rstan::stan_model(file = "poisson_model.stan")
+
+pois_args <-
+  list(n = n, p = p, y = Y, log_N = log(N), 
+       X = X_mat, mu_alpha = mean(log(Y/N)))
+
+pois_fit <-
+  rstan::sampling(object = pois_model,
+                  data = pois_args)
+```
+
