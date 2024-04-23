@@ -1,0 +1,79 @@
+---
+title: "EDA"
+author: "Xinyan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("E:\\from Desktop\\【UW-Madison】\\PhD courses\\24 spring\\775\\project new")
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+```
+
+
+```{r EDA}
+df=read.csv("data.csv")
+
+str(df)
+df$route=as.factor(df$route)
+df$surface=as.factor(df$surface)
+df$light=as.factor(df$light)
+df$license=as.factor(df$license)
+str(df)
+
+##### route: offset
+route_sum = df %>%
+  group_by(route) %>%
+  summarise(total = sum(n))
+route_sum
+
+# Basic barplot
+png("eda_route.png", width = 8, height = 15*6/16, units = "in", res = 400)
+ggplot(data=route_sum, aes(x=route,y=total)) +
+  geom_bar(stat="identity")
+
+surface_sum = df %>%
+  group_by(surface) %>%
+  summarise(total = sum(n))
+surface_sum
+
+# Basic barplot
+p1=ggplot(data=surface_sum, aes(x=surface,y=total)) +
+  geom_bar(stat="identity", width=0.5)+
+  #coord_flip(ylim = c(0,150000))
+  theme(axis.text.x = element_text(angle = 90))
+
+light_sum = df %>%
+  group_by(light) %>%
+  summarise(total = sum(n))
+light_sum
+
+p2=ggplot(data=light_sum, aes(x=light,y=total)) +
+  geom_bar(stat="identity",width=0.5)+
+  #coord_flip(ylim = c(0,150000)) #+
+  theme(axis.text.x = element_text(angle = 90))
+
+
+license_sum = df %>%
+  group_by(license) %>%
+  summarise(total = sum(n))
+license_sum
+
+# Basic barplot
+p3=ggplot(data=license_sum, aes(x=license,y=total)) +
+  geom_bar(stat="identity", width=0.5)+
+  #coord_flip(ylim = c(0,150000)) #+
+  theme(axis.text.x = element_text(angle = 90))
+
+
+png("eda_variables.png", width = 8, height = 15*6/16, units = "in", res = 400)
+ggarrange(p1, p2, p3,
+          ncol = 3, nrow = 1)
+```
+
