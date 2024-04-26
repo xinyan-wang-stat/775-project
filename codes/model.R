@@ -170,7 +170,7 @@ p1 = poi %>%
   ggtitle("Poisson Density") + labs(x = "Count",
                                     y = "Density",
                                     color = "Legend") +
-  scale_color_manual(values = colors) + theme_bw()
+  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.0125))
 
 
 
@@ -259,6 +259,6 @@ p2 = nb %>%
   ggtitle("NegativeBinomial Density") + labs(x = "Count",
                                              y = "Density",
                                              color = "Legend") +
-  scale_color_manual(values = colors) + theme_bw()
+  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.0125))
 
 grid.arrange(p1, p2, ncol=2)
