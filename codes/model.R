@@ -166,11 +166,11 @@ colors <- c("Predict_Y" = "blue",
 p1 = poi %>%
   ggplot() + geom_density(aes(x = y, color = "Y")) +
   geom_density(aes(x = floor(mean), color = "Predict_Y")) +
-  xlim(c(1, 500)) +
+  xlim(c(1, 1000)) +
   ggtitle("Poisson Density") + labs(x = "Count",
                                     y = "Density",
                                     color = "Legend") +
-  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.0125))
+  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.009))
 
 
 
@@ -255,10 +255,11 @@ nb$y = data$n
 p2 = nb %>%
   ggplot() + geom_density(aes(x = y, color = "Y")) +
   geom_density(aes(x = floor(mean), color = "Predict_Y")) +
-  xlim(c(1, 500)) +
+  xlim(c(1, 1000)) +
   ggtitle("NegativeBinomial Density") + labs(x = "Count",
                                              y = "Density",
                                              color = "Legend") +
-  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.0125))
+  scale_color_manual(values = colors) + theme_bw() + ylim(c(0, 0.009))
 
-grid.arrange(p1, p2, ncol=2)
+p1+p2
+
